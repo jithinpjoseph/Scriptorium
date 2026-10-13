@@ -54,6 +54,7 @@ aside{width:250px;background:var(--pn);border-right:1px solid var(--ln);overflow
 .sh:empty{counter-increment:none}.sh:first-child{margin-top:0;padding-top:0;border-top:0}
 .sh::before{content:counter(sc) ". ";color:var(--ac);filter:brightness(.85)}.sh:empty::before{content:""}
 #ib{display:none}html.ci #ib{display:inline-block}
+#tst{position:fixed;left:50%;bottom:max(28px,env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--pn);color:var(--ui);border:1px solid var(--ac);padding:10px 18px;border-radius:22px;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}#tst.on{opacity:1}
 @page{size:letter;margin:1in 1in 1in 1.5in}
 @page{@top-right{content:counter(page) ".";font:12pt "Courier New",Courier,monospace}}
 @media print{.sh::before{color:#000;filter:none}
@@ -115,9 +116,9 @@ $('#im').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader(
 function ok(){let s=D.stories.find(x=>x.id==tmp.id);if(!s){s={id:'s'+Date.now(),th:'night',fs:16,fn:'m',cp:'#1b1b1f',ct:'#f2f2f2',wm:0,bl:[{t:'sh',x:'INT. COFFEE SHOP - DAY'},{t:'ac',x:'Rain taps the window. MAYA stirs a cold coffee.'},{t:'ch',x:'MAYA'},{t:'dl',x:'You said five minutes.'}]};D.stories.push(s)}
 s.t=$('#e1').value.trim()||'Untitled';s.ge=$('#e2').value;s.goal=+$('#e3').value||5000;s.g=tmp.g;s.img=tmp.img;save();$('#md').className='';lib()}
 function del(id){if(confirm('Delete this story? This cannot be undone.')){D.stories=D.stories.filter(x=>x.id!=id);save();lib()}}
-function op(id){S=D.stories.find(x=>x.id==id);v='s';tb='s';ed()}
+function op(id,np){S=D.stories.find(x=>x.id==id);v='s';tb='s';if(!np)history.pushState({s:'ed',id},'');ed()}
 /* Editor shell */
-function ed(){th();$('#app').innerHTML=`<div class="top ed"><div class=r1><button onclick=lib()>‹ Library</button><b class=tt>${esc(S.t)}</b><button class=sm onclick="document.body.classList.toggle('so')">Panels</button></div>
+function ed(){th();$('#app').innerHTML=`<div class="top ed"><div class=r1><button onclick=back()>‹ Library</button><b class=tt>${esc(S.t)}</b><button class=sm onclick="document.body.classList.toggle('so')">Panels</button></div>
 <div class=r2><div class=seg><button id=vs onclick="vw('s')">Script</button><button id=vo onclick="vw('o')">Outline</button></div><button id=ty onclick=cyc() title="Change element type"></button><button onclick="pn('th')">Look</button><button onclick="pn('ex')">Export</button><button onclick=foc()>Focus</button></div></div>
 <div class=main><aside id=sd></aside><section id=ct></section><div id=pop></div></div><div class=sb id=sb></div>`;vw(v)}
 function vw(x){v=x;$('#vs').className=x=='s'?'on':'';$('#vo').className=x=='o'?'on':'';document.body.classList.remove('so');if(x=='s'){$('#ct').innerHTML=`<div id=pg>${html()}</div>`;bind();sty()}else ol();side();stat()}
@@ -194,5 +195,17 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();DP=e;ib()});
 addEventListener('appinstalled',()=>{DP=null;ib()});
 function inst(){if(DP){DP.prompt();DP.userChoice.finally(()=>{DP=null;ib()})}else alert('On iPhone or iPad: tap the Share button in Safari, then "Add to Home Screen".')}
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+/* Back button: close overlays, editor -> library, double back to exit */
+let et;
+function toast(m){let t=$('#tst');if(!t){t=document.createElement('div');t.id='tst';document.body.appendChild(t)}t.textContent=m;t.className='on';clearTimeout(t._t);t._t=setTimeout(()=>t.className='',2000)}
+const ov=()=>$('#md').classList.contains('on')||($('#pop')&&$('#pop').classList.contains('on'))||document.body.classList.contains('so')||document.body.classList.contains('fo');
+function back(){if(history.state&&history.state.s=='ed')history.back();else lib()}
+function arm(){toast('Press back again to exit');clearTimeout(et);et=setTimeout(()=>{if(history.state&&history.state.r)history.pushState({s:'lib'},'')},2200)}
+addEventListener('popstate',e=>{let st=e.state||{};
+if(ov()){$('#md').className='';let p=$('#pop');if(p)p.className='';document.body.classList.remove('so','fo');history.pushState(S?{s:'ed',id:S.id}:{s:'lib'},'');return}
+if(st.s=='lib'){if(S)lib();return}
+if(st.s=='ed'){if(!S&&st.id&&D.stories.find(x=>x.id==st.id))op(st.id,1);return}
+arm()});
+if(history.state&&history.state.s)history.replaceState({s:'lib'},'');else{history.replaceState({r:1},'');history.pushState({s:'lib'},'')}
 ib();lib();
 </script></body></html>
