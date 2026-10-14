@@ -53,6 +53,15 @@ aside{width:250px;background:var(--pn);border-right:1px solid var(--ln);overflow
 .sh{font-weight:700;text-transform:uppercase;margin-top:2em;padding-top:1em;border-top:1px solid color-mix(in srgb,var(--tx) 22%,transparent);counter-increment:sc}
 .sh:empty{counter-increment:none}.sh:first-child{margin-top:0;padding-top:0;border-top:0}
 .sh::before{content:counter(sc) ". ";color:var(--ac);filter:brightness(.85)}.sh:empty::before{content:""}
+[data-k=p] .sh{text-transform:none;text-align:center;font-size:1.25em;margin-top:2.2em;border-top:0;padding-top:0}
+[data-k=p] .sh::before{content:"Chapter " counter(sc);display:block;font-size:.6em;letter-spacing:.2em;text-transform:uppercase;margin-bottom:.4em}
+[data-k=p] .sh:empty::before{content:""}
+[data-k=p] .ac{text-indent:1.6em;margin:0 0 .5em;text-align:justify;line-height:1.7}[data-k=p] .sh+.ac{text-indent:0}
+.gw{padding:14px;overflow:auto}.gt{border-collapse:separate;border-spacing:0;font-size:13px}
+.gt th,.gt td{border-bottom:1px solid var(--ln);border-right:1px solid var(--ln);padding:9px 11px;text-align:center;min-width:36px;cursor:pointer}
+.gt th:first-child{position:sticky;left:0;background:var(--pn);text-align:left;z-index:1;white-space:nowrap}
+.gt thead th{position:sticky;top:0;background:var(--pn)}.gt thead th:first-child{z-index:2}.gt td.y{color:var(--ac)}
+@media print{[data-k=p] #pg{font:12pt/1.55 Georgia,"Times New Roman",serif!important}[data-k=p] .b.ac{margin:0!important;text-indent:1.5em;text-align:justify}[data-k=p] .b.sh{text-align:center;margin:0 0 1.5em!important;break-before:page}[data-k=p] .b.sh:first-child{break-before:auto}[data-k=p] .sh::before{color:#000}}
 #ib{display:none}html.ci #ib{display:inline-block}
 #tst{position:fixed;left:50%;bottom:max(28px,env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--pn);color:var(--ui);border:1px solid var(--ac);padding:10px 18px;border-radius:22px;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}#tst.on{opacity:1}
 @page{size:letter;margin:1in 1in 1in 1.5in}
@@ -101,27 +110,27 @@ const wc=s=>s.bl.reduce((a,b)=>a+(b.x.trim()?b.x.trim().split(/\s+/).length:0),0
 const nm=x=>x.replace(/\(.*?\)/g,'').trim().toUpperCase();
 const L=h=>{let c=[1,3,5].map(i=>{let x=parseInt(h.substr(i,2),16)/255;return x<=.03928?x/12.92:((x+.055)/1.055)**2.4});return .2126*c[0]+.7152*c[1]+.0722*c[2]};
 const cr=(a,b)=>{let x=L(a),y=L(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
-function th(s=S){let r=document.documentElement.style;document.body.dataset.th=s.th;document.body.dataset.fn=s.fn;r.setProperty('--fs',s.fs+'px');r.setProperty('--wm',s.wm|0);if(s.th=='custom'){r.setProperty('--pg',s.cp||'#1b1b1f');r.setProperty('--tx',s.ct||'#f2f2f2')}else{r.removeProperty('--pg');r.removeProperty('--tx')}}
+function th(s=S){let r=document.documentElement.style;document.body.dataset.th=s.th;document.body.dataset.fn=s.fn;document.body.dataset.k=s.k||'s';r.setProperty('--fs',s.fs+'px');r.setProperty('--wm',s.wm|0);if(s.th=='custom'){r.setProperty('--pg',s.cp||'#1b1b1f');r.setProperty('--tx',s.ct||'#f2f2f2')}else{r.removeProperty('--pg');r.removeProperty('--tx')}}
 /* Library */
 function lib(){S=null;document.body.className='';th({th:'night',fn:'m',fs:16});
 $('#app').innerHTML=`<div class=top><b class=logo>SCRIPTORIUM</b><span class=sp></span><button id=ib class=on onclick=inst()>Install app</button><button onclick=bk()>Backup</button><button onclick="$('#rs').click()">Restore</button></div>
-<div class=shelf>${D.stories.map(s=>`<div class=bk><div class=cv style="${cov(s)}" onclick="op('${s.id}')"><i>${esc(s.t)}</i></div><div class=bm><b>${esc(s.t)}</b><small>${esc(s.ge||'Screenplay')} · ${wc(s)} words</small><div><button onclick="edit('${s.id}')">Edit cover</button><button onclick="del('${s.id}')" aria-label="Delete">Delete</button></div></div></div>`).join('')}<div class="bk add" onclick="edit()" role=button tabindex=0>+<small>New story</small></div></div>`}
+<div class=shelf>${D.stories.map(s=>`<div class=bk><div class=cv style="${cov(s)}" onclick="op('${s.id}')"><i>${esc(s.t)}</i></div><div class=bm><b>${esc(s.t)}</b><small>${esc(s.ge||(s.k=='p'?'Story':'Screenplay'))} · ${wc(s)} words</small><div><button onclick="edit('${s.id}')">Edit cover</button><button onclick="del('${s.id}')" aria-label="Delete">Delete</button></div></div></div>`).join('')}<div class="bk add" onclick="edit()" role=button tabindex=0>+<small>New story</small></div></div>`}
 function edit(id){let s=D.stories.find(x=>x.id==id)||{t:'',ge:'',g:0,goal:5000};tmp={id:id||'',g:s.g|0,img:s.img};
 $('#md').className='on';$('#md').innerHTML=`<div class=box><h3>${id?'Edit story':'New story'}</h3><div class=pv><div class=cv id=pvc style="${cov(tmp)}"></div><div style="display:flex;flex-direction:column;gap:8px;flex:1"><input id=e1 placeholder="Title" value="${esc(s.t)}"><input id=e2 placeholder="Genre" value="${esc(s.ge||'')}"></div></div>
 <div class=sw>${G.map((c,i)=>`<span data-g=${i} style="background:linear-gradient(145deg,${c[0]},${c[1]})" onclick="tmp.g=${i};tmp.img=null;pv()"></span>`).join('')}</div>
-<button onclick="$('#im').click()">Upload cover image</button><label>Word goal <input id=e3 type=number value=${s.goal||5000} style="width:100px"></label>
+<button onclick="$('#im').click()">Upload cover image</button>${id?'':'<label>Type <select id=e4 style="background:var(--pn);color:var(--ui);border:1px solid var(--ln);border-radius:8px;padding:6px"><option value=s>Screenplay<option value=p>Prose / story</select></label>'}<label>Word goal <input id=e3 type=number value=${s.goal||5000} style="width:100px"></label>
 <div class=cf><button class=on onclick=ok()>Save</button><button onclick="$('#md').className=''">Cancel</button></div></div>`}
 function pv(){$('#pvc').style.cssText=cov(tmp)}
 $('#im').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{let i=new Image();i.onload=()=>{let c=document.createElement('canvas');c.width=300;c.height=450;let x=c.getContext('2d'),k=Math.max(300/i.width,450/i.height),w=i.width*k,h=i.height*k;x.drawImage(i,(300-w)/2,(450-h)/2,w,h);tmp.img=c.toDataURL('image/jpeg',.8);pv()};i.src=r.result};r.readAsDataURL(f);e.target.value=''};
-function ok(){let s=D.stories.find(x=>x.id==tmp.id);if(!s){s={id:'s'+Date.now(),th:'night',fs:16,fn:'m',cp:'#1b1b1f',ct:'#f2f2f2',wm:0,bl:[{t:'sh',x:'INT. COFFEE SHOP - DAY'},{t:'ac',x:'Rain taps the window. MAYA stirs a cold coffee.'},{t:'ch',x:'MAYA'},{t:'dl',x:'You said five minutes.'}]};D.stories.push(s)}
+function ok(){let K=$('#e4')?$('#e4').value:'s',s=D.stories.find(x=>x.id==tmp.id);if(!s){s={id:'s'+Date.now(),k:K,th:'night',fs:16,fn:K=='p'?'z':'m',cp:'#1b1b1f',ct:'#f2f2f2',wm:0,bl:[{t:'sh',x:'INT. COFFEE SHOP - DAY'},{t:'ac',x:'Rain taps the window. MAYA stirs a cold coffee.'},{t:'ch',x:'MAYA'},{t:'dl',x:'You said five minutes.'}]};D.stories.push(s);if(K=='p')s.bl=[{t:'sh',x:'The Beginning'},{t:'ac',x:'Write your first paragraph here.'}]}
 s.t=$('#e1').value.trim()||'Untitled';s.ge=$('#e2').value;s.goal=+$('#e3').value||5000;s.g=tmp.g;s.img=tmp.img;save();$('#md').className='';lib()}
 function del(id){if(confirm('Delete this story? This cannot be undone.')){D.stories=D.stories.filter(x=>x.id!=id);save();lib()}}
 function op(id,np){S=D.stories.find(x=>x.id==id);v='s';tb='s';if(!np)history.pushState({s:'ed',id},'');ed()}
 /* Editor shell */
 function ed(){th();$('#app').innerHTML=`<div class="top ed"><div class=r1><button onclick=back()>‹ Library</button><b class=tt>${esc(S.t)}</b><button class=sm onclick="document.body.classList.toggle('so')">Panels</button></div>
-<div class=r2><div class=seg><button id=vs onclick="vw('s')">Script</button><button id=vo onclick="vw('o')">Outline</button></div><button id=ty onclick=cyc() title="Change element type"></button><button onclick="pn('th')">Look</button><button onclick="pn('ex')">Export</button><button onclick=foc()>Focus</button></div></div>
+<div class=r2><div class=seg><button id=vs onclick="vw('s')">Script</button><button id=vo onclick="vw('o')">Outline</button><button id=vg onclick="vw('g')">Grid</button></div><button id=ty onclick=cyc() title="Change element type"></button><button onclick="pn('th')">Look</button><button onclick="pn('ex')">Export</button><button onclick=foc()>Focus</button></div></div>
 <div class=main><aside id=sd></aside><section id=ct></section><div id=pop></div></div><div class=sb id=sb></div>`;vw(v)}
-function vw(x){v=x;$('#vs').className=x=='s'?'on':'';$('#vo').className=x=='o'?'on':'';document.body.classList.remove('so');if(x=='s'){$('#ct').innerHTML=`<div id=pg>${html()}</div>`;bind();sty()}else ol();side();stat()}
+function vw(x){v=x;$('#vs').className=x=='s'?'on':'';$('#vo').className=x=='o'?'on':'';$('#vg').className=x=='g'?'on':'';document.body.classList.remove('so');if(x=='s'){$('#ct').innerHTML=`<div id=pg>${html()}</div>`;bind();sty()}else if(x=='o')ol();else gr();side();stat()}
 const HB=['ac','dl','pa'];let NR=null,NK='';
 const names=()=>[...new Set([...Object.keys(S.cs||{}),...Object.keys(chars())])].filter(Boolean);
 function nre(){let n=names().sort((a,b)=>b.length-a.length),k=n.join('|');if(k==NK)return false;NK=k;NR=n.length?new RegExp('(?<![\\p{L}\\p{N}])('+n.map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')(?![\\p{L}\\p{N}])','giu'):null;return true}
@@ -130,51 +139,57 @@ function cpos(d){let s=getSelection();if(!s.rangeCount)return 0;let r=s.getRange
 function cset(d,n){let w=document.createTreeWalker(d,4),t,r=document.createRange(),s=getSelection();while(t=w.nextNode()){if(n<=t.length){r.setStart(t,n);r.collapse(true);s.removeAllRanges();s.addRange(r);return}n-=t.length}r.selectNodeContents(d);r.collapse(false);s.removeAllRanges();s.addRange(r)}
 function hb(d){let b=S.bl[+d.dataset.i];if(!b||!HB.includes(b.t))return;let w=(NR&&b.x.match(NR)||[]).join('|'),c=[...d.querySelectorAll('b')].map(x=>x.textContent).join('|');if(w===c&&d.textContent===b.x)return;let n=hl(b.x),a=document.activeElement===d,o=a?cpos(d):0;d.innerHTML=n;if(a)cset(d,o)}
 const html=()=>{nre();return S.bl.map((b,i)=>`<div class="b ${b.t}" data-i=${i} contenteditable=true>${HB.includes(b.t)?hl(b.x):esc(b.x)}</div>`).join('')};
-const sty=()=>{let t=$('#ty');if(t&&S.bl[CUR])t.textContent=NM[S.bl[CUR].t]};
+const NMP={sh:'Chapter',ac:'Paragraph'};const sty=()=>{let t=$('#ty');if(t&&S.bl[CUR])t.textContent=(S.k=='p'?NMP:NM)[S.bl[CUR].t]};
 function bind(){const p=$('#pg');
 p.onfocusin=e=>{CUR=+e.target.dataset.i;sty()};
 p.onpaste=e=>{e.preventDefault();document.execCommand('insertText',false,((e.clipboardData||window.clipboardData).getData('text/plain')||'').replace(/\s*\r?\n+\s*/g,' '))};
-p.oninput=e=>{let d=e.target,b=S.bl[+d.dataset.i];b.x=d.textContent;if(b.t=='ac'&&/^(INT|EXT|EST|I\/E)[. ]/i.test(b.x)){b.t='sh';d.className='b sh';sty()}if(!e.isComposing)hb(d);lazy()};
+p.oninput=e=>{let d=e.target,b=S.bl[+d.dataset.i];b.x=d.textContent;if(S.k!='p'&&b.t=='ac'&&/^(INT|EXT|EST|I\/E)[. ]/i.test(b.x)){b.t='sh';d.className='b sh';sty()}if(!e.isComposing)hb(d);lazy()};
 p.onkeydown=e=>{let d=e.target,i=+d.dataset.i,b=S.bl[i];if(!b)return;
 if(e.key=='Enter'){e.preventDefault();let o=cpos(d);let r=b.x.slice(o);b.x=b.x.slice(0,o);S.bl.splice(i+1,0,{t:NX[b.t],x:r});rd(i+1)}
-else if(e.key=='Tab'){e.preventDefault();if(b.t=='ch'&&b.x&&!e.shiftKey){let m=Object.keys(chars()).find(n=>n.startsWith(b.x.toUpperCase())&&n!=b.x.toUpperCase());if(m){b.x=m;rd(i,1);return}}b.t=ORD[(ORD.indexOf(b.t)+(e.shiftKey?5:1))%6];rd(i,1)}
+else if(e.key=='Tab'){e.preventDefault();if(b.t=='ch'&&b.x&&!e.shiftKey){let m=Object.keys(chars()).find(n=>n.startsWith(b.x.toUpperCase())&&n!=b.x.toUpperCase());if(m){b.x=m;rd(i,1);return}}let O=S.k=='p'?['sh','ac']:ORD;b.t=O[(O.indexOf(b.t)+(e.shiftKey?O.length-1:1))%O.length];rd(i,1)}
 else if(e.key=='Backspace'&&!b.x&&S.bl.length>1){e.preventDefault();S.bl.splice(i,1);rd(Math.max(0,i-1),1)}};
 }
 function rd(f,end){save();$('#pg').innerHTML=html();let d=$(`.b[data-i="${f}"]`);d.focus();let r=document.createRange();r.selectNodeContents(d);r.collapse(!end);let s=getSelection();s.removeAllRanges();s.addRange(r);CUR=f;sty();side();stat()}
-function cyc(){if(v!='s'||!S.bl[CUR])return;let b=S.bl[CUR];b.t=ORD[(ORD.indexOf(b.t)+1)%6];rd(CUR,1)}
+function cyc(){if(v!='s'||!S.bl[CUR])return;let b=S.bl[CUR];let O=S.k=='p'?['sh','ac']:ORD;b.t=O[(O.indexOf(b.t)+1)%O.length];rd(CUR,1)}
 function lazy(){clearTimeout(tm);tm=setTimeout(()=>{save();side();stat();if(v=='s'&&nre())document.querySelectorAll('#pg .b').forEach(hb)},300)}
 function go(i){vw('s');setTimeout(()=>{let d=$(`.b[data-i="${i}"]`);if(d){d.scrollIntoView({block:'center'});d.focus()}},30)}
 /* Derived data */
-function scn(){let r=[],c=null;S.bl.forEach((b,i)=>{if(b.t=='sh'&&b.x.trim()){c={i,h:b.x.trim().toUpperCase(),c:new Set};r.push(c)}else if(b.t=='ch'&&c&&b.x.trim())c.c.add(nm(b.x))});return r}
-function chars(){let m={};S.bl.forEach(b=>{if(b.t=='ch'&&b.x.trim()){let n=nm(b.x);m[n]=m[n]||{n:0,s:0};m[n].n++}});scn().forEach(s=>s.c.forEach(n=>m[n].s++));return m}
+function rxs(){return Object.keys(S.cs||{}).map(n=>[n,new RegExp('(?<![\\p{L}\\p{N}])'+n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?![\\p{L}\\p{N}])','giu')])}
+function scn(){let r=[],c=null,X=S.k=='p'?rxs():[];S.bl.forEach((b,i)=>{if(b.t=='sh'&&b.x.trim()){c={i,h:S.k=='p'?b.x.trim():b.x.trim().toUpperCase(),c:new Set};r.push(c)}else if(b.t=='ch'&&c&&b.x.trim())c.c.add(nm(b.x));else if(c&&b.t=='ac')X.forEach(([n,q])=>{q.lastIndex=0;if(q.test(b.x))c.c.add(n)})});return r}
+function chars(){let m={};if(S.k=='p'){Object.keys(S.cs||{}).forEach(n=>m[n]={n:0,s:0});rxs().forEach(([n,q])=>S.bl.forEach(b=>{if(b.t=='ac')m[n].n+=(b.x.match(q)||[]).length}))}else S.bl.forEach(b=>{if(b.t=='ch'&&b.x.trim()){let n=nm(b.x);m[n]=m[n]||{n:0,s:0};m[n].n++}});scn().forEach(s=>s.c.forEach(n=>{if(m[n])m[n].s++}));return m}
 const loc=h=>h.replace(/^(INT\.?\/EXT|I\/E|INT|EXT|EST)\.?\s*/,'').replace(/\s+-\s+[^-]*$/,'').trim();
 function locs(){let m={};scn().forEach(s=>{let l=loc(s.h);m[l]=(m[l]||0)+1});return m}
-function side(){let h='',sc=scn();if(tb=='s')h=sc.map((s,k)=>`<div class=it data-q="${esc((k+1)+' '+s.h+' '+(S.bl[s.i].sm||'')).toLowerCase()}" onclick=go(${s.i})><b>${k+1}</b><span>${esc(s.h)}</span></div>`).join('')||'<p class=em>Type INT. or EXT. to start a scene.</p>';
-if(tb=='c'){let c=chars(),cs=S.cs||{};NL=[...new Set([...Object.keys(cs),...Object.keys(c)])];h=`<button style="width:100%;margin-bottom:8px" onclick="cp(-1)">+ Add character</button>`+(NL.map((n,k)=>{let p=cs[n]||{},x=c[n]||{n:0};return`<div class=it onclick="cp(${k})"><span>${esc(n)}<small class=rl>${esc([p.role,p.tr].filter(Boolean).join(' · ')||'Tap to add details')}</small></span><small>${x.n} lines</small></div>`}).join('')||'<p class=em>Add a character here, or type a character cue in the script.</p>')}
+function side(){let h='',sc=scn();if(tb=='s')h=sc.map((s,k)=>`<div class=it data-q="${esc((k+1)+' '+s.h+' '+(S.bl[s.i].sm||'')).toLowerCase()}" onclick=go(${s.i})><b>${k+1}</b><span>${esc(s.h)}</span></div>`).join('')||(S.k=='p'?'<p class=em>Add a Chapter line to start a chapter.</p>':'<p class=em>Type INT. or EXT. to start a scene.</p>');
+if(tb=='c'){let c=chars(),cs=S.cs||{};NL=[...new Set([...Object.keys(cs),...Object.keys(c)])];h=`<button style="width:100%;margin-bottom:8px" onclick="cp(-1)">+ Add character</button>`+(NL.map((n,k)=>{let p=cs[n]||{},x=c[n]||{n:0};return`<div class=it onclick="cp(${k})"><span>${esc(n)}<small class=rl>${esc([p.role,p.tr].filter(Boolean).join(' · ')||'Tap to add details')}</small></span><small>${x.n} ${S.k=='p'?'mentions':'lines'}</small></div>`}).join('')||'<p class=em>Add a character here, or type a character cue in the script.</p>')}
 if(tb=='p'){let l=locs();NL=Object.keys(l);h=NL.map((n,k)=>`<div class=it><span>${esc(n)}</span><small>${l[n]} sc</small><button onclick="rn('p',${k})" aria-label="Rename">Edit</button></div>`).join('')||'<p class=em>Locations come from scene headings.</p>'}
-$('#sd').innerHTML=`<div class=st>${[['s','Scenes'],['c','Cast'],['p','Places']].map(a=>`<button class="${tb==a[0]?'on':''}" onclick="tb='${a[0]}';side()">${a[1]}</button>`).join('')}</div>${tb=='s'?`<input id=sq type=search placeholder="Find scene: number or word" value="${esc(SQ)}" oninput="SQ=this.value;fl()" style="width:100%;margin-bottom:8px;background:transparent;border:1px solid var(--ln);border-radius:8px;padding:8px">`:''}<div id=sl>${h}</div>`;fl()}
+$('#sd').innerHTML=`<div class=st>${(S.k=='p'?[['s','Chapters'],['c','Cast']]:[['s','Scenes'],['c','Cast'],['p','Places']]).map(a=>`<button class="${tb==a[0]?'on':''}" onclick="tb='${a[0]}';side()">${a[1]}</button>`).join('')}</div>${tb=='s'?`<input id=sq type=search placeholder="Find: number or word" value="${esc(SQ)}" oninput="SQ=this.value;fl()" style="width:100%;margin-bottom:8px;background:transparent;border:1px solid var(--ln);border-radius:8px;padding:8px">`:''}<div id=sl>${h}</div>`;fl()}
 let SQ='';function fl(){let q=SQ.toLowerCase().trim();document.querySelectorAll('#sl .it[data-q]').forEach(e=>e.style.display=!q||e.dataset.q.includes(q)?'':'none')}
 function rn(k,i){let o=NL[i],n=prompt('Rename "'+o+'" to:',o);if(!n)return;n=n.trim().toUpperCase();S.bl.forEach(b=>{if(k=='c'&&b.t=='ch'&&nm(b.x)==o)b.x=n+(b.x.includes('(')?' '+b.x.slice(b.x.indexOf('(')):'');if(k=='c'&&(b.t=='ac'||b.t=='dl'))b.x=b.x.split(o).join(n);if(k=='p'&&b.t=='sh')b.x=b.x.toUpperCase().split(o).join(n)});save();vw(v)}
 /* Character profiles */
 let CO='';const CF=[['role','Role'],['age','Age'],['look','Appearance'],['beh','Behaviour and personality'],['tr','Traits (comma separated)'],['goal','Goal and motivation'],['arc','Character arc'],['rel','Relationships'],['nt','Notes']],CT=['look','beh','goal','arc','rel','nt'];
 function cp(i){CO=i>=0?NL[i]:'';let p=(S.cs||{})[CO]||{},x=chars()[CO];
-$('#md').className='on';$('#md').innerHTML=`<div class=box><h3>${CO?'Character profile':'New character'}</h3><label class=fl>Name<input id=c_n value="${esc(CO)}" placeholder="e.g. MAYA"></label>`+CF.map(f=>`<label class=fl>${f[1]}${CT.includes(f[0])?`<textarea id=c_${f[0]} rows=2>${esc(p[f[0]]||'')}</textarea>`:`<input id=c_${f[0]} value="${esc(p[f[0]]||'')}" ${f[0]=='role'?'list=rl placeholder="Protagonist, Villain, Mentor…"':''}>`}</label>`).join('')+`<datalist id=rl><option>Protagonist<option>Antagonist<option>Supporting<option>Mentor<option>Love interest<option>Minor</datalist>${x?`<small>${x.n} dialogue lines in ${x.s} scenes</small>`:''}<div class=cf><button class=on onclick=csv()>Save</button><button onclick="$('#md').className=''">Cancel</button>${CO&&(S.cs||{})[CO]?'<span class=sp></span><button onclick=cdel()>Remove profile</button>':''}</div></div>`}
+$('#md').className='on';$('#md').innerHTML=`<div class=box><h3>${CO?'Character profile':'New character'}</h3><label class=fl>Name<input id=c_n value="${esc(CO)}" placeholder="e.g. MAYA"></label>`+CF.map(f=>`<label class=fl>${f[1]}${CT.includes(f[0])?`<textarea id=c_${f[0]} rows=2>${esc(p[f[0]]||'')}</textarea>`:`<input id=c_${f[0]} value="${esc(p[f[0]]||'')}" ${f[0]=='role'?'list=rl placeholder="Protagonist, Villain, Mentor…"':''}>`}</label>`).join('')+`<datalist id=rl><option>Protagonist<option>Antagonist<option>Supporting<option>Mentor<option>Love interest<option>Minor</datalist>${x?`<small>${S.k=='p'?x.n+' mentions in '+x.s+' chapters':x.n+' dialogue lines in '+x.s+' scenes'}</small>`:''}<div class=cf><button class=on onclick=csv()>Save</button><button onclick="$('#md').className=''">Cancel</button>${CO&&(S.cs||{})[CO]?'<span class=sp></span><button onclick=cdel()>Remove profile</button>':''}</div></div>`}
 function renC(o,n){S.bl.forEach(b=>{if(b.t=='ch'&&nm(b.x)==o)b.x=n+(b.x.includes('(')?' '+b.x.slice(b.x.indexOf('(')):'');if(b.t=='ac'||b.t=='dl')b.x=b.x.split(o).join(n)})}
-function csv(){let n=$('#c_n').value.trim().toUpperCase();if(!n){alert('Enter a character name.');return}S.cs=S.cs||{};if(CO&&CO!=n){renC(CO,n);delete S.cs[CO]}let p={};CF.forEach(f=>p[f[0]]=$('#c_'+f[0]).value.trim());S.cs[n]=p;save();$('#md').className='';vw(v)}
-function cdel(){if(confirm('Remove this profile? Script lines stay.')){delete S.cs[CO];save();$('#md').className='';vw(v)}}
+function csv(){let n=$('#c_n').value.trim().toUpperCase();if(!n){alert('Enter a character name.');return}S.cs=S.cs||{};if(CO&&CO!=n){renC(CO,n);delete S.cs[CO]}let p={};CF.forEach(f=>p[f[0]]=$('#c_'+f[0]).value.trim());S.cs[n]=p;save();$('#md').className='';keep()}
+function keep(){let so=document.body.classList.contains('so');vw(v);if(so)document.body.classList.add('so')}
+function cdel(){if(confirm('Remove this profile? Script lines stay.')){delete S.cs[CO];save();$('#md').className='';keep()}}
 function stat(){let w=wc(S),ln=S.bl.reduce((a,b)=>a+Math.ceil(b.x.length/58)+1,0),p=Math.max(1,Math.ceil(ln/52)),g=Math.round(w/S.goal*100);
-$('#sb').innerHTML=`<span>${p} pages · about ${p} min</span><span>${scn().length} scenes · ${Object.keys(chars()).length} characters</span><span>${w} words</span><div class=bar><i style="width:${Math.min(100,g)}%"></i></div><span>${g}% of ${S.goal}</span>`}
+$('#sb').innerHTML=`<span>${S.k=='p'?Math.max(1,Math.ceil(w/300))+' pages · '+Math.max(1,Math.round(w/200))+' min read':p+' pages · about '+p+' min'}</span><span>${scn().length} ${S.k=='p'?'chapters':'scenes'} · ${Object.keys(chars()).length} characters</span><span>${w} words</span><div class=bar><i style="width:${Math.min(100,g)}%"></i></div><span>${g}% of ${S.goal}</span>`}
 /* Outline */
 function ol(){let sc=scn();$('#ct').innerHTML=`<div class=cards>${sc.map((s,k)=>{let b=S.bl[s.i];return`<div class=card><div class=ch2><b>${k+1}</b><span>${esc(s.h)}</span></div><textarea placeholder="Scene summary" aria-label="Summary" onchange="S.bl[${s.i}].sm=this.value;save()">${esc(b.sm||'')}</textarea><div class=cf><button class="chip s${b.st|0}" onclick="stt(${s.i})">${ST[b.st|0]}</button><span class=sp></span><button onclick="mv(${k},-1)" aria-label="Move earlier">◀</button><button onclick="mv(${k},1)" aria-label="Move later">▶</button><button onclick="go(${s.i})">Open</button><small>${[...s.c].map(esc).join(', ')||'No characters yet'}</small></div></div>`}).join('')}</div>${sc.length?'':'<p class=em>No scenes yet. Start a scene heading in Script.</p>'}`}
 function stt(i){S.bl[i].st=((S.bl[i].st|0)+1)%4;save();ol()}
 function mv(k,d){let sc=scn(),j=k+d;if(j<0||j>=sc.length)return;let rg=n=>[sc[n].i,n+1<sc.length?sc[n+1].i:S.bl.length],[a,b]=rg(Math.min(k,j)),[c,e]=rg(Math.max(k,j));let A=S.bl.slice(a,b),B=S.bl.slice(c,e);S.bl.splice(a,e-a,...B,...A);save();ol();side()}
+let GN=[];
+function gr(){let sc=scn(),n=names(),c=chars();GN=n;
+if(!sc.length||!n.length){$('#ct').innerHTML=`<p class=em>${S.k=='p'?'Add chapters and characters (Cast tab) to see who appears where.':'Add scenes and characters to see who appears where.'}</p>`;return}
+$('#ct').innerHTML=`<div class=gw><table class=gt><thead><tr><th>${S.k=='p'?'Chapter':'Scene'}</th>${sc.map((s,k)=>`<th title="${esc(s.h)}" onclick="go(${s.i})">${k+1}</th>`).join('')}<th>Total</th></tr></thead><tbody>${n.map((m,i)=>`<tr><th onclick="NL=GN;cp(${i})">${esc(m)}</th>${sc.map(s=>`<td class="${s.c.has(m)?'y':''}" onclick="go(${s.i})">${s.c.has(m)?'●':''}</td>`).join('')}<td>${(c[m]||{s:0}).s}</td></tr>`).join('')}</tbody></table></div>`}
 /* Panels */
 function pn(k){let p=$('#pop');if(p.dataset.k==k&&p.className=='on'){p.className='';return}p.dataset.k=k;p.className='on';
 p.innerHTML=k=='th'?`<h4>Theme</h4><div class=tg>${[['night','Night'],['sepia','Sepia'],['paper','Paper'],['blue','Midnight'],['custom','Custom']].map(a=>`<button class="${S.th==a[0]?'on':''}" onclick="sth('${a[0]}')">${a[1]}</button>`).join('')}</div>
 ${S.th=='custom'?`<label>Page <input type=color value="${S.cp}" oninput="cc('cp',this.value)"></label><label>Text <input type=color value="${S.ct}" oninput="cc('ct',this.value)"></label><small id=cr>Contrast ${cr(S.cp,S.ct).toFixed(1)}:1</small>`:''}
 <h4>Font</h4><div class=tg>${[['m','Courier'],['z','Serif'],['s','Sans']].map(a=>`<button class="${S.fn==a[0]?'on':''}" onclick="S.fn='${a[0]}';th();save();pn('x');pn('th')">${a[1]}</button>`).join('')}</div>
 <label>Size <input type=range min=12 max=26 value=${S.fs} oninput="S.fs=+this.value;th();save()"></label><label>Warm filter <input type=range min=0 max=60 value=${S.wm|0} oninput="S.wm=+this.value;th();save()"></label>`
-:`<h4>Export</h4><button onclick=pr()>PDF / Print (paper format)</button><button onclick="cop('a')">Copy whole script</button><button onclick="cop('s')">Copy current scene</button><button onclick=fnt()>Fountain (.fountain)</button><button onclick=bk()>Backup all stories (.json)</button>`}
+:`<h4>Export</h4><button onclick=pr()>PDF / Print (paper format)</button><button onclick="cop('a')">Copy whole script</button><button onclick="cop('s')">Copy current scene</button><button onclick=fnt()>${S.k=='p'?'Text (.txt)':'Fountain (.fountain)'}</button><button onclick=bk()>Backup all stories (.json)</button>`}
 function sth(t){S.th=t;th();save();$('#pop').className='';pn('th')}
 function cc(k,x){S[k]=x;th();save();let c=cr(S.cp,S.ct);$('#cr').textContent='Contrast '+c.toFixed(1)+':1'+(c<4.5?' (low, hard to read)':'')}
 function foc(){document.body.classList.toggle('fo')}
@@ -183,10 +198,10 @@ addEventListener('keydown',e=>{if(e.key=='Escape')document.body.classList.remove
 const dl_=(t,n,m)=>{let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:m}));a.download=n;a.click()};
 function pr(){$('#pop').className='';vw('s');setTimeout(print,150)}
 function cop(w){let a=0,b=S.bl.length,sc=scn();if(w=='s'){if(!sc.length){alert('No scene found yet.');return}let k=Math.max(0,sc.filter(s=>s.i<=CUR).length-1);a=sc[k].i;b=k+1<sc.length?sc[k+1].i:b}
-let o='';S.bl.slice(a,b).forEach(x=>{let t=x.x.trim();if(!t)return;o+=(['sh','ch','tr'].includes(x.t)?t.toUpperCase():x.t=='pa'&&!/^\(/.test(t)?'('+t+')':t)+(x.t=='ch'||x.t=='pa'?'\n':'\n\n')});o=o.trim();
+let o='';S.bl.slice(a,b).forEach(x=>{let t=x.x.trim();if(!t)return;o+=(['sh','ch','tr'].includes(x.t)&&S.k!='p'?t.toUpperCase():x.t=='pa'&&!/^\(/.test(t)?'('+t+')':t)+(x.t=='ch'||x.t=='pa'?'\n':'\n\n')});o=o.trim();
 let ok=()=>{$('#pop').className='';alert(w=='s'?'Scene copied.':'Script copied.')},c=false;try{let t=document.createElement('textarea');t.value=o;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();c=document.execCommand('copy');t.remove()}catch(e){}
 if(c)ok();else if(navigator.clipboard)navigator.clipboard.writeText(o).then(ok);else alert('Copy is not available here. Use Export, then Fountain.')}
-function fnt(){let o=`Title: ${S.t}\n\n`;S.bl.forEach(b=>{let x=b.x.trim();if(!x)return;let u=x.toUpperCase();o+=({sh:/^(INT|EXT|EST|I\/E)/i.test(x)?u:'.'+u,ac:x,ch:u,dl:x,pa:/^\(/.test(x)?x:'('+x+')',tr:'> '+u}[b.t])+(b.t=='ch'||b.t=='pa'?'\n':'\n\n')});dl_(o,S.t+'.fountain','text/plain')}
+function fnt(){if(S.k=='p'){let o=S.t+'\n\n',n=0;S.bl.forEach(b=>{let x=b.x.trim();if(!x)return;o+=(b.t=='sh'?'Chapter '+(++n)+': '+x:x)+'\n\n'});dl_(o.trim(),S.t+'.txt','text/plain');return}let o=`Title: ${S.t}\n\n`;S.bl.forEach(b=>{let x=b.x.trim();if(!x)return;let u=x.toUpperCase();o+=({sh:/^(INT|EXT|EST|I\/E)/i.test(x)?u:'.'+u,ac:x,ch:u,dl:x,pa:/^\(/.test(x)?x:'('+x+')',tr:'> '+u}[b.t])+(b.t=='ch'||b.t=='pa'?'\n':'\n\n')});dl_(o,S.t+'.fountain','text/plain')}
 function bk(){dl_(JSON.stringify(D),'scriptorium-backup.json','application/json')}
 $('#rs').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!Array.isArray(x.stories))throw 0;if(confirm('Replace all current stories with this backup?')){D=x;save();lib()}}catch(err){alert('This file is not a Scriptorium backup.')}};r.readAsText(f);e.target.value=''};
 /* Install (PWA) */
@@ -200,10 +215,11 @@ if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.s
 let et;
 function toast(m){let t=$('#tst');if(!t){t=document.createElement('div');t.id='tst';document.body.appendChild(t)}t.textContent=m;t.className='on';clearTimeout(t._t);t._t=setTimeout(()=>t.className='',2000)}
 const ov=()=>$('#md').classList.contains('on')||($('#pop')&&$('#pop').classList.contains('on'))||document.body.classList.contains('so')||document.body.classList.contains('fo');
+function cl(){let m=$('#md'),p=$('#pop'),b=document.body.classList;if(m.classList.contains('on')){m.className='';return 1}if(p&&p.classList.contains('on')){p.className='';return 1}if(b.contains('fo')){b.remove('fo');return 1}if(b.contains('so')){b.remove('so');return 1}return 0}
 function back(){if(history.state&&history.state.s=='ed')history.back();else lib()}
 function arm(){toast('Press back again to exit');clearTimeout(et);et=setTimeout(()=>{if(history.state&&history.state.r)history.pushState({s:'lib'},'')},2200)}
 addEventListener('popstate',e=>{let st=e.state||{};
-if(ov()){$('#md').className='';let p=$('#pop');if(p)p.className='';document.body.classList.remove('so','fo');history.pushState(S?{s:'ed',id:S.id}:{s:'lib'},'');return}
+if(cl()){history.pushState(S?{s:'ed',id:S.id}:{s:'lib'},'');return}
 if(st.s=='lib'){if(S)lib();return}
 if(st.s=='ed'){if(!S&&st.id&&D.stories.find(x=>x.id==st.id))op(st.id,1);return}
 arm()});
