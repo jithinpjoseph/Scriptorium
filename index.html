@@ -128,11 +128,12 @@ function nre(){let n=names().sort((a,b)=>b.length-a.length),k=n.join('|');if(k==
 function hl(x){let e=x.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');return NR?e.replace(NR,'<b>$1</b>'):e}
 function cpos(d){let s=getSelection();if(!s.rangeCount)return 0;let r=s.getRangeAt(0),p=r.cloneRange();p.selectNodeContents(d);p.setEnd(r.endContainer,r.endOffset);return p.toString().length}
 function cset(d,n){let w=document.createTreeWalker(d,4),t,r=document.createRange(),s=getSelection();while(t=w.nextNode()){if(n<=t.length){r.setStart(t,n);r.collapse(true);s.removeAllRanges();s.addRange(r);return}n-=t.length}r.selectNodeContents(d);r.collapse(false);s.removeAllRanges();s.addRange(r)}
-function hb(d){let b=S.bl[+d.dataset.i];if(!b||!HB.includes(b.t))return;let n=hl(b.x);if(d.innerHTML===n)return;let a=document.activeElement===d,o=a?cpos(d):0;d.innerHTML=n;if(a)cset(d,o)}
-const html=()=>{nre();return S.bl.map((b,i)=>`<div class="b ${b.t}" data-i=${i} contenteditable=plaintext-only>${HB.includes(b.t)?hl(b.x):esc(b.x)}</div>`).join('')};
+function hb(d){let b=S.bl[+d.dataset.i];if(!b||!HB.includes(b.t))return;let w=(NR&&b.x.match(NR)||[]).join('|'),c=[...d.querySelectorAll('b')].map(x=>x.textContent).join('|');if(w===c&&d.textContent===b.x)return;let n=hl(b.x),a=document.activeElement===d,o=a?cpos(d):0;d.innerHTML=n;if(a)cset(d,o)}
+const html=()=>{nre();return S.bl.map((b,i)=>`<div class="b ${b.t}" data-i=${i} contenteditable=true>${HB.includes(b.t)?hl(b.x):esc(b.x)}</div>`).join('')};
 const sty=()=>{let t=$('#ty');if(t&&S.bl[CUR])t.textContent=NM[S.bl[CUR].t]};
 function bind(){const p=$('#pg');
 p.onfocusin=e=>{CUR=+e.target.dataset.i;sty()};
+p.onpaste=e=>{e.preventDefault();document.execCommand('insertText',false,((e.clipboardData||window.clipboardData).getData('text/plain')||'').replace(/\s*\r?\n+\s*/g,' '))};
 p.oninput=e=>{let d=e.target,b=S.bl[+d.dataset.i];b.x=d.textContent;if(b.t=='ac'&&/^(INT|EXT|EST|I\/E)[. ]/i.test(b.x)){b.t='sh';d.className='b sh';sty()}if(!e.isComposing)hb(d);lazy()};
 p.onkeydown=e=>{let d=e.target,i=+d.dataset.i,b=S.bl[i];if(!b)return;
 if(e.key=='Enter'){e.preventDefault();let o=cpos(d);let r=b.x.slice(o);b.x=b.x.slice(0,o);S.bl.splice(i+1,0,{t:NX[b.t],x:r});rd(i+1)}
