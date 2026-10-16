@@ -63,9 +63,12 @@ aside{width:250px;background:var(--pn);border-right:1px solid var(--ln);overflow
 .gt thead th{position:sticky;top:0;background:var(--pn)}.gt thead th:first-child{z-index:2}.gt td.y{color:var(--ac)}
 @media print{[data-k=p] #pg{font:12pt/1.55 Georgia,"Times New Roman",serif!important}[data-k=p] .b.ac{margin:0!important;text-indent:1.5em;text-align:justify}[data-k=p] .b.sh{text-align:center;margin:0 0 1.5em!important;break-before:page}[data-k=p] .b.sh:first-child{break-before:auto}[data-k=p] .sh::before{color:#000}}
 #fmt{display:none;position:fixed;z-index:60;background:var(--pn);border:1px solid var(--ac);border-radius:12px;padding:6px;gap:6px;flex-wrap:wrap;max-width:calc(100vw - 16px);box-shadow:0 8px 30px rgba(0,0,0,.5);user-select:none;-webkit-user-select:none}
-#fmt.on{display:flex}#fmt button{padding:6px 12px;min-width:42px}
+#fmt.on{display:flex}#fmt button{padding:6px 10px;min-width:38px}
 #fmt .cp{display:none;gap:9px;width:100%;padding:4px 2px;flex-wrap:wrap}#fmt.co .cp{display:flex}
 #fmt .cp i{width:28px;height:28px;border-radius:50%;border:2px solid var(--ln);cursor:pointer}
+.mw{display:flex;flex-direction:column;height:100%}.mb{display:flex;gap:6px;padding:8px 10px;overflow-x:auto;align-items:center;flex-shrink:0;border-bottom:1px solid var(--ln)}
+.mb button,.mb select{padding:4px 10px;font-size:13px;flex-shrink:0;color:var(--ui);border:1px solid var(--ln);border-radius:8px;background:transparent}.mb select{background:var(--pn)}
+.mb i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}#sv{flex:1;min-height:0;width:100%;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 #ib{display:none}html.ci #ib{display:inline-block}
 #tst{position:fixed;left:50%;bottom:max(28px,env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--pn);color:var(--ui);border:1px solid var(--ac);padding:10px 18px;border-radius:22px;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}#tst.on{opacity:1}
 @page{size:letter;margin:1in 1in 1in 1.5in}
@@ -100,7 +103,7 @@ mark.n{font-weight:400}.sh{margin-top:1.17em!important;padding-top:0!important;b
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 @media print{body{background:#fff!important;overflow:visible;height:auto}body::after,.top,aside,.sb,#pop,#md,#fx{display:none!important}#app,.main,#ct{display:block!important;height:auto!important;overflow:visible!important}#pg{background:#fff!important;color:#000!important;box-shadow:none!important;width:100%!important;padding:0!important}}
 </style></head><body>
-<div id="app"></div><div id="md"></div><div id="fmt" onmousedown="event.preventDefault()"><button onclick="fc('bold')"><b>B</b></button><button onclick="fc('italic')"><i>I</i></button><button onclick="fc('underline')"><u>U</u></button><button onclick="fc('strikeThrough')"><s>S</s></button><button onclick="$('#fmt').classList.toggle('co')">Color</button><button onclick="fc('removeFormat')">Clear</button><div class="cp"></div></div><button id="fx" onclick="foc()">Exit focus</button>
+<div id="app"></div><div id="md"></div><div id="fmt" onmousedown="event.preventDefault()"><button onclick="fc('bold')"><b>B</b></button><button onclick="fc('italic')"><i>I</i></button><button onclick="fc('underline')"><u>U</u></button><button onclick="fc('strikeThrough')"><s>S</s></button><button aria-label="Align left" onclick="al('left')"><svg width="16" height="14" viewBox="0 0 16 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 2h14M1 6h9 M1 10h14M1 13h9"/></svg></button><button aria-label="Align center" onclick="al('center')"><svg width="16" height="14" viewBox="0 0 16 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 2h14M3.5 6h9 M1 10h14M3.5 13h9"/></svg></button><button aria-label="Align right" onclick="al('right')"><svg width="16" height="14" viewBox="0 0 16 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 2h14M6 6h9 M1 10h14M6 13h9"/></svg></button><button onclick="$('#fmt').classList.toggle('co')">Color</button><button onclick="fc('removeFormat')">Clear</button><div class="cp"></div></div><button id="fx" onclick="foc()">Exit focus</button>
 <input type="file" id="im" accept="image/*" hidden><input type="file" id="rs" accept=".json" hidden>
 <script>
 const $=s=>document.querySelector(s),LS='scriptorium.v1',esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -132,9 +135,9 @@ function del(id){if(confirm('Delete this story? This cannot be undone.')){D.stor
 function op(id,np){S=D.stories.find(x=>x.id==id);v='s';tb='s';if(!np)history.pushState({s:'ed',id},'');ed()}
 /* Editor shell */
 function ed(){th();$('#app').innerHTML=`<div class="top ed"><div class=r1><button onclick=back()>‹ Library</button><b class=tt>${esc(S.t)}</b><button class=sm onclick="document.body.classList.toggle('so')">Panels</button></div>
-<div class=r2><div class=seg><button id=vs onclick="vw('s')">Script</button><button id=vo onclick="vw('o')">Outline</button><button id=vg onclick="vw('g')">Grid</button></div><button id=ty onclick=cyc() title="Change element type"></button><button onclick="pn('th')">Look</button><button onclick="pn('ex')">Export</button><button onclick=foc()>Focus</button></div></div>
+<div class=r2><div class=seg><button id=vs onclick="vw('s')">Script</button><button id=vo onclick="vw('o')">Outline</button><button id=vg onclick="vw('g')">Grid</button><button id=vm onclick="vw('m')">Map</button></div><button id=ty onclick=cyc() title="Change element type"></button><button onclick="pn('th')">Look</button><button onclick="pn('ex')">Export</button><button onclick=foc()>Focus</button></div></div>
 <div class=main><aside id=sd></aside><section id=ct></section><div id=pop></div></div><div class=sb id=sb></div>`;vw(v)}
-function vw(x){v=x;$('#vs').className=x=='s'?'on':'';$('#vo').className=x=='o'?'on':'';$('#vg').className=x=='g'?'on':'';document.body.classList.remove('so');if(x=='s'){$('#ct').innerHTML=`<div id=pg>${html()}</div>`;bind();sty()}else if(x=='o')ol();else gr();side();stat()}
+function vw(x){v=x;$('#vs').className=x=='s'?'on':'';$('#vo').className=x=='o'?'on':'';$('#vg').className=x=='g'?'on':'';$('#vm').className=x=='m'?'on':'';document.body.classList.remove('so');if(x=='s'){$('#ct').innerHTML=`<div id=pg>${html()}</div>`;bind();sty()}else if(x=='o')ol();else if(x=='m')mp();else gr();side();stat()}
 const HB=['ac','dl','pa'];let NR=null,NK='';
 const names=()=>[...new Set([...Object.keys(S.cs||{}),...Object.keys(chars())])].filter(Boolean);
 function nre(){let n=names().sort((a,b)=>b.length-a.length),k=n.join('|');if(k==NK)return false;NK=k;NR=n.length?new RegExp('(?<![\\p{L}\\p{N}])('+n.map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')(?![\\p{L}\\p{N}])','giu'):null;return true}
@@ -145,14 +148,14 @@ function bh(b){let h=esc(b.x);if(b.h){let t=document.createElement('div');t.inne
 function cpos(d){let s=getSelection();if(!s.rangeCount)return 0;let r=s.getRangeAt(0),p=r.cloneRange();p.selectNodeContents(d);p.setEnd(r.endContainer,r.endOffset);return p.toString().length}
 function cset(d,n){let w=document.createTreeWalker(d,4),t,r=document.createRange(),s=getSelection();while(t=w.nextNode()){if(n<=t.length){r.setStart(t,n);r.collapse(true);s.removeAllRanges();s.addRange(r);return}n-=t.length}r.selectNodeContents(d);r.collapse(false);s.removeAllRanges();s.addRange(r)}
 function hb(d){let b=S.bl[+d.dataset.i];if(!b||!HB.includes(b.t))return;let w=(NR&&b.x.match(NR)||[]).join('|'),c=[...d.querySelectorAll('mark.n')].map(x=>x.textContent).join('|');if(w===c)return;let a=document.activeElement===d,o=a?cpos(d):0;d.innerHTML=hl(clean(d));if(a)cset(d,o)}
-const html=()=>{nre();return S.bl.map((b,i)=>`<div class="b ${b.t}" data-i=${i} contenteditable=true>${bh(b)}</div>`).join('')};
+const html=()=>{nre();return S.bl.map((b,i)=>`<div class="b ${b.t}" data-i=${i}${b.al?` style="text-align:${b.al}"`:''} contenteditable=true>${bh(b)}</div>`).join('')};
 const NMP={sh:'Chapter',ac:'Paragraph'};const sty=()=>{let t=$('#ty');if(t&&S.bl[CUR])t.textContent=(S.k=='p'?NMP:NM)[S.bl[CUR].t]};
 function bind(){const p=$('#pg');
 p.onfocusin=e=>{CUR=+e.target.dataset.i;sty()};
 p.onpaste=e=>{e.preventDefault();document.execCommand('insertText',false,((e.clipboardData||window.clipboardData).getData('text/plain')||'').replace(/\s*\r?\n+\s*/g,' '))};
 p.oninput=e=>{let d=e.target,b=S.bl[+d.dataset.i];b.x=d.textContent;fh(b,d);if(S.k!='p'&&b.t=='ac'&&/^(INT|EXT|EST|I\/E)[. ]/i.test(b.x)){b.t='sh';d.className='b sh';sty()}if(!e.isComposing)hb(d);lazy()};
 p.onkeydown=e=>{let d=e.target,i=+d.dataset.i,b=S.bl[i];if(!b)return;
-if(e.key=='Enter'){e.preventDefault();let s=getSelection(),r=s.rangeCount?s.getRangeAt(0).cloneRange():null,nx={t:NX[b.t],x:''};if(r){r.deleteContents();r.setEnd(d,d.childNodes.length);let t=document.createElement('div');t.appendChild(r.extractContents());nx.x=t.textContent;let h=clean(t);if(nx.x&&/<span style/.test(h))nx.h=h}b.x=d.textContent;fh(b,d);S.bl.splice(i+1,0,nx);rd(i+1)}
+if(e.key=='Enter'){e.preventDefault();let s=getSelection(),r=s.rangeCount?s.getRangeAt(0).cloneRange():null,nx={t:NX[b.t],x:'',al:b.al};if(r){r.deleteContents();r.setEnd(d,d.childNodes.length);let t=document.createElement('div');t.appendChild(r.extractContents());nx.x=t.textContent;let h=clean(t);if(nx.x&&/<span style/.test(h))nx.h=h}b.x=d.textContent;fh(b,d);S.bl.splice(i+1,0,nx);rd(i+1)}
 else if(e.key=='Tab'){e.preventDefault();if(b.t=='ch'&&b.x&&!e.shiftKey){let m=Object.keys(chars()).find(n=>n.startsWith(b.x.toUpperCase())&&n!=b.x.toUpperCase());if(m){b.x=m;delete b.h;rd(i,1);return}}let O=S.k=='p'?['sh','ac']:ORD;b.t=O[(O.indexOf(b.t)+(e.shiftKey?O.length-1:1))%O.length];rd(i,1)}
 else if(e.key=='Backspace'&&!b.x&&S.bl.length>1){e.preventDefault();S.bl.splice(i,1);rd(Math.max(0,i-1),1)}};
 }
@@ -175,9 +178,9 @@ function rn(k,i){let o=NL[i],n=prompt('Rename "'+o+'" to:',o);if(!n)return;n=n.t
 /* Character profiles */
 let CO='';const CF=[['role','Role'],['age','Age'],['look','Appearance'],['beh','Behaviour and personality'],['tr','Traits (comma separated)'],['goal','Goal and motivation'],['arc','Character arc'],['rel','Relationships'],['nt','Notes']],CT=['look','beh','goal','arc','rel','nt'];
 function cp(i){CO=i>=0?NL[i]:'';let p=(S.cs||{})[CO]||{},x=chars()[CO];
-$('#md').className='on';$('#md').innerHTML=`<div class=box><h3>${CO?'Character profile':'New character'}</h3><label class=fl>Name<input id=c_n value="${esc(CO)}" placeholder="e.g. MAYA"></label>`+CF.map(f=>`<label class=fl>${f[1]}${CT.includes(f[0])?`<textarea id=c_${f[0]} rows=2>${esc(p[f[0]]||'')}</textarea>`:`<input id=c_${f[0]} value="${esc(p[f[0]]||'')}" ${f[0]=='role'?'list=rl placeholder="Protagonist, Villain, Mentor…"':''}>`}</label>`).join('')+`<datalist id=rl><option>Protagonist<option>Antagonist<option>Supporting<option>Mentor<option>Love interest<option>Minor</datalist>${x?`<small>${S.k=='p'?x.n+' mentions in '+x.s+' chapters':x.n+' dialogue lines in '+x.s+' scenes'}</small>`:''}<div class=cf><button class=on onclick=csv()>Save</button><button onclick="$('#md').className=''">Cancel</button>${CO&&(S.cs||{})[CO]?'<span class=sp></span><button onclick=cdel()>Remove profile</button>':''}</div></div>`}
+$('#md').className='on';$('#md').innerHTML=`<div class=box><h3>${CO?'Character profile':'New character'}</h3><label class=fl>Name<input id=c_n value="${esc(CO)}" placeholder="e.g. MAYA"></label>`+CF.map(f=>`<label class=fl>${f[1]}${CT.includes(f[0])?`<textarea id=c_${f[0]} rows=2>${esc(p[f[0]]||'')}</textarea>`:`<input id=c_${f[0]} value="${esc(p[f[0]]||'')}" ${f[0]=='role'?'list=rl placeholder="Protagonist, Villain, Mentor…"':''}>`}</label>`).join('')+`<datalist id=rl><option>Protagonist<option>Antagonist<option>Supporting<option>Mentor<option>Love interest<option>Minor</datalist>${x?`<small>${S.k=='p'?x.n+' mentions in '+x.s+' chapters':x.n+' dialogue lines in '+x.s+' scenes'}</small>`:''}${relUI()}<div class=cf><button class=on onclick=csv()>Save</button><button onclick="$('#md').className=''">Cancel</button>${CO&&(S.cs||{})[CO]?'<span class=sp></span><button onclick=cdel()>Remove profile</button>':''}</div></div>`}
 function renC(o,n){S.bl.forEach(b=>{if(b.t=='ch'&&nm(b.x)==o)b.x=n+(b.x.includes('(')?' '+b.x.slice(b.x.indexOf('(')):'');if(b.t=='ac'||b.t=='dl')b.x=b.x.split(o).join(n)})}
-function csv(){let n=$('#c_n').value.trim().toUpperCase();if(!n){alert('Enter a character name.');return}S.cs=S.cs||{};if(CO&&CO!=n){renC(CO,n);delete S.cs[CO]}let p={};CF.forEach(f=>p[f[0]]=$('#c_'+f[0]).value.trim());S.cs[n]=p;save();$('#md').className='';keep()}
+function csv(){let n=$('#c_n').value.trim().toUpperCase();if(!n){alert('Enter a character name.');return}S.cs=S.cs||{};if(CO&&CO!=n){renC(CO,n);delete S.cs[CO];(S.rl||[]).forEach(r=>{if(r.a==CO)r.a=n;if(r.b==CO)r.b=n});if(S.mp&&S.mp[CO]){S.mp[n]=S.mp[CO];delete S.mp[CO]}}let p={};CF.forEach(f=>p[f[0]]=$('#c_'+f[0]).value.trim());S.cs[n]=p;save();$('#md').className='';keep()}
 function keep(){let so=document.body.classList.contains('so');vw(v);if(so)document.body.classList.add('so')}
 function cdel(){if(confirm('Remove this profile? Script lines stay.')){delete S.cs[CO];save();$('#md').className='';keep()}}
 function stat(){let w=wc(S),ln=S.bl.reduce((a,b)=>a+Math.ceil(b.x.length/58)+1,0),p=Math.max(1,Math.ceil(ln/52)),g=Math.round(w/S.goal*100);
@@ -218,12 +221,48 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();DP=e;ib()});
 addEventListener('appinstalled',()=>{DP=null;ib()});
 function inst(){if(DP){DP.prompt();DP.userChoice.finally(()=>{DP=null;ib()})}else alert('On iPhone or iPad: tap the Share button in Safari, then "Add to Home Screen".')}
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+/* Relationship map */
+const RT=[['Family','#ffd84d'],['Friend','#4cd964'],['Romance','#ff7ad9'],['Rival','#ff5d5d'],['Mentor','#6c8cff'],['Colleague','#3de0ff'],['Other','#9aa7c0']],SEL='background:var(--pn);color:var(--ui);border:1px solid var(--ln);border-radius:8px;padding:6px';
+const rc=t=>(RT.find(x=>x[0]==t)||RT[6])[1],cv=n=>getComputedStyle(document.body).getPropertyValue(n).trim();
+const allN=()=>[...new Set([...names(),...(S.rl||[]).flatMap(r=>[r.a,r.b])])];
+let MF={t:'',c:''},VB={x:0,y:0,w:1000,h:800},MN=[],PP={},VE=[];
+const rnm=()=>CO||$('#c_n').value.trim().toUpperCase();
+function rlist(n){let h='';(S.rl||[]).forEach((r,i)=>{if(n&&(r.a==n||r.b==n))h+=`<div class=it style="cursor:default"><span>${esc(r.a==n?r.b:r.a)} · ${esc(r.t)}${r.d?(r.a==n?' →':' ←'):''}${r.n?`<small class=rl>${esc(r.n)}</small>`:''}</span><button onclick="rD(${i})" aria-label="Remove">✕</button></div>`});return h||'<small>No connections yet.</small>'}
+function relUI(){let o=allN().filter(x=>x!=CO);return`<h4 style="margin:6px 0 0">Connections</h4><div id=rl2>${rlist(CO)}</div><div class=cf><select id=r_o style="${SEL}">${o.map(x=>`<option>${esc(x)}`).join('')}</select><select id=r_t style="${SEL}">${RT.map(t=>`<option>${t[0]}`).join('')}</select></div><input id=r_n placeholder="Note (optional)"><label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type=checkbox id=r_d> One-way arrow (this character to the other)</label><button onclick=rA()>Add connection</button>`}
+function rA(){let n=rnm(),o=$('#r_o').value;if(!n){alert('Enter the character name first.');return}if(!o){alert('Add another character first.');return}S.rl=S.rl||[];S.rl.push({a:n,b:o,t:$('#r_t').value,n:$('#r_n').value.trim(),d:$('#r_d').checked?1:0});save();$('#r_n').value='';$('#rl2').innerHTML=rlist(n)}
+function rD(i){S.rl.splice(i,1);save();$('#rl2').innerHTML=rlist(rnm())}
+function lbl(i){let r=S.rl[i];toast(r.a+(r.d?' → ':' – ')+r.b+': '+r.t+(r.n?' · '+r.n:''))}
+function edg(P,E){let g={},o='';E.forEach(r=>{let k=[r.a,r.b].sort().join('|');(g[k]=g[k]||[]).push(r)});
+Object.values(g).forEach(L=>L.forEach((r,j)=>{let A=P[r.a],B=P[r.b];if(!A||!B)return;let dx=B.x-A.x,dy=B.y-A.y,len=Math.hypot(dx,dy)||1,ux=dx/len,uy=dy/len,off=(j-(L.length-1)/2)*50*(r.a<r.b?1:-1),cx=(A.x+B.x)/2-uy*off,cy=(A.y+B.y)/2+ux*off,c=rc(r.t),mx=(A.x+2*cx+B.x)/4,my=(A.y+2*cy+B.y)/4;
+o+=`<path d="M${A.x} ${A.y}Q${cx} ${cy} ${B.x} ${B.y}" stroke="${c}" stroke-width="2.5" fill="none"/>`;
+if(r.d){let tx=B.x-cx,ty=B.y-cy,tl=Math.hypot(tx,ty)||1;tx/=tl;ty/=tl;let hw=Math.max(64,r.b.length*9+26)/2,k=Math.min(hw/(Math.abs(tx)||1e-6),19/(Math.abs(ty)||1e-6))+4,px=B.x-tx*k,py=B.y-ty*k;o+=`<polygon points="${px},${py} ${px-tx*13-ty*6},${py-ty*13+tx*6} ${px-tx*13+ty*6},${py-ty*13-tx*6}" fill="${c}"/>`}
+let w=r.t.length*7+14;o+=`<g onclick="lbl(${r.i})" style="cursor:pointer"><rect x="${mx-w/2}" y="${my-10}" width="${w}" height="20" rx="10" fill="${cv('--bg')}" stroke="${c}"/><text x="${mx}" y="${my+4}" text-anchor="middle" font-size="12" fill="${cv('--ui')}">${esc(r.t)}</text></g>`}));return o}
+const nds=(P,ns)=>ns.map(m=>{let p=P[m],w=Math.max(64,m.length*9+26);return`<g class=nd data-n="${esc(m)}" transform="translate(${p.x} ${p.y})" style="cursor:pointer"><rect x="${-w/2}" y="-19" width="${w}" height="38" rx="19" fill="${cv('--pn')}" stroke="${cv('--ac')}" stroke-width="2"/><text y="5" text-anchor="middle" font-size="14" font-weight="700" fill="${cv('--ui')}">${esc(m)}</text></g>`}).join('');
+const sb=()=>$('#sv').setAttribute('viewBox',`${VB.x} ${VB.y} ${VB.w} ${VB.h}`);
+function zm(f,cx,cy){let w=Math.min(6000,Math.max(200,VB.w/f)),r=w/VB.w;VB.x=cx-(cx-VB.x)*r;VB.y=cy-(cy-VB.y)*r;VB.h*=r;VB.w=w;sb()}
+function fit(){let s=$('#sv'),a=s.clientWidth||360,b=s.clientHeight||500,xs=MN.map(m=>PP[m].x),ys=MN.map(m=>PP[m].y),x0=Math.min(...xs)-100,x1=Math.max(...xs)+100,y0=Math.min(...ys)-60,y1=Math.max(...ys)+60,w=x1-x0,h=y1-y0;if(w/h>a/b)h=w*b/a;else w=h*a/b;VB={x:(x0+x1)/2-w/2,y:(y0+y1)/2-h/2,w,h};sb()}
+function mp(){let all=allN(),R=(S.rl||[]).map((r,i)=>({...r,i})),E=R.filter(r=>(!MF.t||r.t==MF.t)&&(!MF.c||r.a==MF.c||r.b==MF.c)),set=new Set();E.forEach(r=>{set.add(r.a);set.add(r.b)});if(MF.c)set.add(MF.c);
+MN=(MF.t||MF.c)?all.filter(x=>set.has(x)):all;VE=E;
+if(!all.length){$('#ct').innerHTML='<p class=em>Add characters in the Cast tab, then add connections in their profiles.</p>';return}
+let n=all.length,r=Math.max(220,n*40),P=S.mp||(S.mp={});PP={};all.forEach((m,i)=>{let a=2*Math.PI*i/n-Math.PI/2;PP[m]=P[m]?{x:P[m].x,y:P[m].y}:{x:r*Math.cos(a),y:r*Math.sin(a)}});
+$('#ct').innerHTML=`<div class=mw><div class=mb><select onchange="MF.c=this.value;mp()"><option value="">Everyone</option>${all.map(m=>`<option${MF.c==m?' selected':''}>${esc(m)}</option>`).join('')}</select><button class="${MF.t?'':'on'}" onclick="MF.t='';mp()">All</button>${RT.map(t=>`<button class="${MF.t==t[0]?'on':''}" onclick="MF.t='${t[0]}';mp()"><i style="background:${t[1]}"></i>${t[0]}</button>`).join('')}<button onclick="zm(1.3,VB.x+VB.w/2,VB.y+VB.h/2)">+</button><button onclick="zm(.77,VB.x+VB.w/2,VB.y+VB.h/2)">−</button><button onclick=fit()>Fit</button><button onclick=mimg()>Save image</button></div><svg id=sv xmlns="http://www.w3.org/2000/svg"><g id=eg>${edg(PP,E)}</g><g id=ng>${nds(PP,MN)}</g></svg></div>`;
+if(MN.length)fit();mbind()}
+function mbind(){let s=$('#sv'),P=new Map(),dr=null,pd=0;const pt=(x,y)=>new DOMPoint(x,y).matrixTransform(s.getScreenCTM().inverse()),dist=()=>{let[a,b]=[...P.values()];return Math.hypot(a.x-b.x,a.y-b.y)};
+s.onpointerdown=e=>{s.setPointerCapture(e.pointerId);P.set(e.pointerId,{x:e.clientX,y:e.clientY});let g=e.target.closest('.nd');dr=P.size==1?{g,n:g&&g.dataset.n,mv:0}:null;if(P.size==2)pd=dist()};
+s.onpointermove=e=>{let o=P.get(e.pointerId);if(!o)return;let dx=e.clientX-o.x,dy=e.clientY-o.y;o.x=e.clientX;o.y=e.clientY;
+if(P.size==2){let d=dist(),[a,b]=[...P.values()];if(pd){let c=pt((a.x+b.x)/2,(a.y+b.y)/2);zm(d/pd,c.x,c.y)}pd=d;return}
+if(!dr)return;dr.mv+=Math.abs(dx)+Math.abs(dy);let k=VB.w/s.clientWidth;
+if(dr.n){let p=PP[dr.n];p.x+=dx*k;p.y+=dy*k;dr.g.setAttribute('transform',`translate(${p.x} ${p.y})`);$('#eg').innerHTML=edg(PP,VE)}else{VB.x-=dx*k;VB.y-=dy*k;sb()}};
+s.onpointerup=s.onpointercancel=e=>{P.delete(e.pointerId);pd=0;if(dr&&dr.n){if(dr.mv<8){let i=MN.indexOf(dr.n);if(i>=0){NL=MN;cp(i)}}else{S.mp=S.mp||{};S.mp[dr.n]={x:PP[dr.n].x,y:PP[dr.n].y};save()}}dr=null};
+s.onwheel=e=>{e.preventDefault();let c=pt(e.clientX,e.clientY);zm(e.deltaY<0?1.15:.87,c.x,c.y)}}
+function mimg(){if(!MN.length)return;let s=$('#sv');fit();let w=1400,h=Math.round(w*VB.h/VB.w),x=`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="${VB.x} ${VB.y} ${VB.w} ${VB.h}" font-family="system-ui,sans-serif"><rect x="${VB.x}" y="${VB.y}" width="${VB.w}" height="${VB.h}" fill="${cv('--bg')}"/>${s.innerHTML}</svg>`,i=new Image();i.onload=()=>{let c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(i,0,0);c.toBlob(b=>{let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=S.t+'-relationships.png';a.click()})};i.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(x)}
 /* Pop-up text formatting (shows only when text is selected) */
 const bo=n=>{n=n&&(n.nodeType==3?n.parentNode:n);return n&&n.closest?n.closest('#pg .b'):null};
 ['#ff5d5d','#ff9f43','#ffd84d','#4cd964','#3de0ff','#6c8cff','#c27cff','#ff7ad9','#ffffff','#111111'].forEach(c=>{let i=document.createElement('i');i.style.background=c;i.onclick=()=>fc('foreColor',c);$('#fmt .cp').appendChild(i)});
 function fb(){let f=$('#fmt'),s=getSelection(),a=s.rangeCount&&!s.isCollapsed?bo(s.anchorNode):null;if(!a||a!==bo(s.focusNode)||typeof v=='undefined'||v!='s'||!S){f.className='';return}
 let r=s.getRangeAt(0).getBoundingClientRect();f.className='on';let w=f.offsetWidth,h=f.offsetHeight,vh=window.visualViewport?visualViewport.height:innerHeight,x=Math.min(Math.max(8,r.left+r.width/2-w/2),innerWidth-w-8),y=r.bottom+48;if(y+h>vh-8)y=Math.max(8,r.top-h-56);f.style.left=x+'px';f.style.top=y+'px'}
 document.addEventListener('selectionchange',fb);
+function al(x){let d=bo(getSelection().anchorNode);if(!d)return;let b=S.bl[+d.dataset.i];if(b.al==x)delete b.al;else b.al=x;d.style.textAlign=b.al||'';save()}
 function fc(c,val){document.execCommand('styleWithCSS',false,true);document.execCommand(c,false,val);let d=bo(getSelection().anchorNode);if(d){let b=S.bl[+d.dataset.i];b.x=d.textContent;fh(b,d);lazy()}}
 /* Back button: close overlays, editor -> library, double back to exit */
 let et;
